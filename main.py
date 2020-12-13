@@ -15,6 +15,10 @@ def clear():
 EPISODES = 4
 
 env = gym.make("Taxi-v3")
+
+Q = np.zeros((env.observation_space.n, env.action_space.n))
+R = env.P[328]
+print(R)
 tot_rew = []
 for i in range(EPISODES):
     env.reset()
@@ -25,7 +29,7 @@ for i in range(EPISODES):
         next_state, reward, done, _ = env.step(env.action_space.sample())
         print(f"Iteration {i} Done {done}")
         rew += reward
-        sleep(0.02)
+        # sleep(0.02)
         clear()
     tot_rew.append(rew)
 
