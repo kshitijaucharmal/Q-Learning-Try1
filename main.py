@@ -18,9 +18,11 @@ for i in range(100):
     env.render()
     _, _, done, _ = env.step(env.action_space.sample())
     print(done)
-    sleep(0.01)
-    clear()
+    sleep(0.05)
     if done:
         break
+    else:
+        clear()
 
-env.close()
+if(input("Press Enter to exit") == ''):
+    env.close()
