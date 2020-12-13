@@ -12,17 +12,23 @@ def clear():
     else:
         _ = system('clear')
 
-env = gym.make("Taxi-v3")
-env.reset()
-for i in range(100):
-    env.render()
-    _, _, done, _ = env.step(env.action_space.sample())
-    print(done)
-    sleep(0.05)
-    if done:
-        break
-    else:
-        clear()
+EPISODES = 4
 
-if(input("Press Enter to exit") == ''):
+env = gym.make("Taxi-v3")
+tot_rew = []
+for i in range(EPISODES):
+    env.reset()
+    done = False
+    rew = 0
+    while not done:
+        env.render()
+        next_state, reward, done, _ = env.step(env.action_space.sample())
+        print(f"Iteration {i} Done {done}")
+        rew += reward
+        sleep(0.02)
+        clear()
+    tot_rew.append(rew)
+
+if(input("Press Enter to get info and exit") == ''):
+    print(f"Average Rewards from {EPISODES} episodes is {np.sum(tot_rew)/len(tot_rew)}")
     env.close()
