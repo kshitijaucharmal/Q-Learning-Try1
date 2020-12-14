@@ -18,5 +18,5 @@ def main():
 
     env.close()
 
-if __name__ == "__main__" && input("Press ENTER To Start") == "":
+if __name__ == "__main__" and input("Press ENTER To Start\n") == "":
     main()
