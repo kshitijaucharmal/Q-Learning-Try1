@@ -1,10 +1,10 @@
 import numpy as np
-import gym
+import gym, sys, os
 from nn import neuralNetwork
 import random
 
 env = gym.make("CartPole-v1")
-Qmodel = neuralNetwork(env.observation_space.shape[0], 10, env.action_space.n, 0.3)
+Qmodel = neuralNetwork(env.observation_space.shape[0], 15, env.action_space.n, 0.3)
 # Tmodel = neuralNetwork()
 state = env.reset()
 print(Qmodel.query(state).T[0])
@@ -15,7 +15,7 @@ GAMMA = 0.99
 EPSILON = 0.6
 
 MEMORY = []
-BATCH_SIZE = 500
+BATCH_SIZE = 256
 
 def main():
     for i in range(10):
@@ -35,6 +35,7 @@ def remember(s, a, r, ns, d):
     MEMORY.append([s, a, r, ns, d])
 
 def experience_replay():
+    global EPSILON
     if len(MEMORY) < BATCH_SIZE:
         return
 
@@ -46,6 +47,8 @@ def experience_replay():
         q_values = Qmodel.query(state).T[0]
         q_values[action] = q_update
         Qmodel.train(state, q_values)
+        # if EPSILON > 0.1:
+        #     EPSILON -= 0.001
 
 
 def cartpole():
@@ -54,7 +57,7 @@ def cartpole():
         done = False # not in tuto
         rew = 0
         while True:
-            env.render()
+            # env.render()
             action = env.action_space.sample() if np.random.random() < EPSILON else np.argmax(Qmodel.query(state).T[0])
 
             next_state, reward, done, _ = env.step(action)
@@ -65,11 +68,18 @@ def cartpole():
             state = next_state
             if done:
                 break
-        print(f"Episode {i} with reward {reward}")
+        print(f"Episode {i} with reward {rew} episilon {EPSILON}")
 
 print(Qmodel.query(env.reset()))
-if __name__ == "__main__" and input("Press ENTER To Start\n") == "":
-    main()
-    cartpole()
-    main()
-    print(Qmodel.query(env.reset()))
+
+if __name__ == '__main__' and input("Press ENTER To Start\n") == "":
+    try:
+        main()
+        cartpole()
+        main()
+    except KeyboardInterrupt:
+        print('Interrupted')
+        try:
+            sys.exit(0)
+        except SystemExit:
+            os._exit(0)
